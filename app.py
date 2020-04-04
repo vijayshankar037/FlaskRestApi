@@ -45,9 +45,12 @@ def add_book():
         "isbn": book_params["isbn"]
         }
         books.insert(0, new_book)
-        return "True"
+        response = Response("Book Added", status=201, mimetype="application/json")
+        response.headers['Location'] = "/book/" + str(new_book['isbn'])
+        return response
     else:
-        return "False"
+        response = Response('Bad Request(Wrong paramets submitted): Correct parems are\n{"name":"abc", "author":"xyz", "isbn":123 }', status=400, mimetype="application/json")
+        return response
 
 #app.run(port =5000)
 app.run()
