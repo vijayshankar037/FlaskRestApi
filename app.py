@@ -1,6 +1,10 @@
+#Importing packages from flask
 from flask import Flask, jsonify, request, Response, json
+
+#Initalizing app varable from Flask
 app = Flask(__name__)
 
+#books collection
 books = [
     {
         "name":"Progamming in C",
@@ -21,14 +25,17 @@ def validateBookObject(bookObject):
     else:
         return False
 
+#GET /
 @app.route('/')
 def hello_world():
     return "Hello world"
 
+#GET /books
 @app.route('/books')
 def get_books():
     return jsonify({"books": books})
 
+#GET book/:isbn
 @app.route('/book/<int:isbn>')
 def get_book_by_isbn(isbn):
     for book in books:
@@ -57,5 +64,6 @@ def add_book():
         response = Response( json.dumps(invalidBookErrorMsg), status=400, mimetype="application/json")
         return response
 
+#Start Flask service
 #app.run(port =5000)
 app.run()
