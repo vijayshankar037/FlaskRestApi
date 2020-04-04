@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 app = Flask(__name__)
 
 books = [
@@ -14,6 +14,13 @@ books = [
     }
 ]
 
+#books params validation
+def validateBookObject(bookObject):
+    if "name" in bookObject and "author" in bookObject and "isbn" in bookObject:
+        return True
+    else:
+        return False
+
 @app.route('/')
 def hello_world():
     return "Hello world"
@@ -28,9 +35,19 @@ def get_book_by_isbn(isbn):
         if book['isbn'] == isbn:
          return book
 
-@app.route('/books', methods = ['POST'])
+@app.route('/book', methods = ['POST'])
 def add_book():
-    return jsonify(request.get_json())
+    book_params = request.get_json()
+    if validateBookObject(book_params):
+        new_book = {
+        "name": book_params["name"],
+        "author": book_params["author"],
+        "isbn": book_params["isbn"]
+        }
+        books.insert(0, new_book)
+        return "True"
+    else:
+        return "False"
 
 #app.run(port =5000)
 app.run()
