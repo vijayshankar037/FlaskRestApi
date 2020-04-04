@@ -64,6 +64,24 @@ def add_book():
         response = Response( json.dumps(invalidBookErrorMsg), status=400, mimetype="application/json")
         return response
 
+#DELETE /book/isbn
+@app.route('/book/<int:isbn>', methods = ['DELETE'])
+def delete_book(isbn):
+    i = 0
+    for book in books:
+        if book['isbn'] == isbn:
+            books.pop(i)
+            response = Response("", status = 204, mimetype='application/json')
+            return response
+        i+=1
+
+    invalidBookErrorMsg = {
+        "error": "Book with isbn {} is not found, so therefore unable to delete book".format(isbn)
+    }
+    response = Response(json.dumps(invalidBookErrorMsg), status = 404, mimetype ="application/json")
+    return response
+
+
 #Start Flask service
 #app.run(port =5000)
 app.run()
