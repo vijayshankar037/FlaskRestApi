@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 books = [
@@ -27,5 +27,9 @@ def get_book_by_isbn(isbn):
     for book in books:
         if book['isbn'] == isbn:
          return book
+
+@app.route('/books', methods = ['POST'])
+def add_book():
+    return jsonify(request.get_json())
 
 app.run(port =5000)
