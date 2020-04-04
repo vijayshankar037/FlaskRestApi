@@ -23,7 +23,7 @@ def get_books():
     return jsonify({"books": books})
 
 @app.route('/book/<int:isbn>')
-def get_book(isbn):
+def get_book_by_isbn(isbn):
     for book in books:
         if book['isbn'] == isbn:
          return book
