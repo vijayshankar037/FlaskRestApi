@@ -22,4 +22,10 @@ def hello_world():
 def get_books():
     return jsonify({"books": books})
 
+@app.route('/book/<int:isbn>')
+def get_book(isbn):
+    for book in books:
+        if book['isbn'] == isbn:
+         return book
+
 app.run(port =5000)
