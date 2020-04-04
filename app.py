@@ -2,7 +2,9 @@
 from flask import Flask, jsonify, request, Response, json
 
 #Initalizing app varable from Flask
-app = Flask(__name__)
+#app = Flask(__name__)
+
+from setting import *
 
 #books collection
 books = [
