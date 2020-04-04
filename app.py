@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request, Response, json
 app = Flask(__name__)
 
 books = [
@@ -35,6 +35,7 @@ def get_book_by_isbn(isbn):
         if book['isbn'] == isbn:
          return book
 
+#POST insert book
 @app.route('/book', methods = ['POST'])
 def add_book():
     book_params = request.get_json()
@@ -49,7 +50,11 @@ def add_book():
         response.headers['Location'] = "/book/" + str(new_book['isbn'])
         return response
     else:
-        response = Response('Bad Request(Wrong paramets submitted): Correct parems are\n{"name":"abc", "author":"xyz", "isbn":123 }', status=400, mimetype="application/json")
+        invalidBookErrorMsg = {
+        "error":"Invalid book object passed in request",
+        "helpString":'Data passed in similer to this {"name":"abc", "author":"xyz", "isbn":123 }'
+        }
+        response = Response( json.dumps(invalidBookErrorMsg), status=400, mimetype="application/json")
         return response
 
 #app.run(port =5000)
