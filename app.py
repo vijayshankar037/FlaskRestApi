@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 app = Flask(__name__)
 
 books = [
@@ -20,10 +20,6 @@ def hello_world():
 
 @app.route('/books')
 def get_books():
-    return {
-                "books": [
-                            {"status": 200}
-                ]
-           }
+    return jsonify({"books": books})
 
 app.run(port =5000)
