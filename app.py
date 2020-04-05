@@ -6,6 +6,14 @@ from flask import Flask, jsonify, request, Response, json
 from BookModel import *
 from setting import *
 
+#jwt authentication
+import jwt, datetime
+
+#for encoding and decoding jwt token
+app.config['SECRATE_KEY'] = 'meow'
+
+books = Book.get_all_books()
+
 #books collection
 # books = [
 #     {
@@ -19,6 +27,16 @@ from setting import *
 #         "isbn":12345002
 #     }
 # ]
+
+@app.route('/login')
+def get_token():
+    expiration_date = datetime.datetime.utcnow() + datetime.timedelta(seconds=1000)
+    token = jwt.encode(
+                {'exp': expiration_date},
+                app.config['SECRATE_KEY'],
+                algorithm='HS256'
+            )
+    return token
 
 #books params validation
 def validateBookObject(bookObject):
@@ -35,7 +53,12 @@ def hello_world():
 #GET /books
 @app.route('/books')
 def get_books():
-    books = Book.get_all_books()
+    token = request.args.get('token')
+    try:
+        jwt.decode(token,app.config['SECRATE_KEY'])
+    except:
+        return jsonify({'error':'Need a vlaid token to view this page'}), 401
+
     return jsonify({"books": books})
 
 #GET book/:isbn
