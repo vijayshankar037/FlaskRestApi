@@ -1,5 +1,9 @@
 from flask import Flask, jsonify, request, Response, json
-app = Flask(__name__)
+
+from setting import *
+#app = Flask(__name__)
+
+#static data for testing..
 books = [
     {
         'name':'book1',
@@ -19,10 +23,12 @@ def validateObject(new_object):
 	else:
 		return False
 
+#get all recodes
 @app.route('/books')
 def get_books():
 	return jsonify({'books': books})
 
+#creating recode api
 @app.route('/books',methods=['POST'])
 def create_book():
 	response_object = request.get_json()
@@ -45,6 +51,7 @@ def create_book():
 		return response
 
 
+#replacing hole recode with new params
 @app.route('/book/<int:id>', methods=['PUT'])
 def replace_object(id):
 	response_data = request.get_json()
@@ -64,6 +71,7 @@ def replace_object(id):
 	response.headers['Location'] = '/book/' + str(id)
 	return response
 
+#show single recde Api
 @app.route('/book/<int:id>')
 def get_book(id):
     return_value = {}
@@ -75,6 +83,7 @@ def get_book(id):
             }
     return  jsonify(return_value)
 
+#patch or update a single attribure api
 @app.route('/book/<int:id>',methods=['PATCH'])
 def update_object(id):
 	response_data = request.get_json()
@@ -94,4 +103,23 @@ def update_object(id):
 			response.headers['Location'] = '/book/' + str(id)
 			return response
 
+#Destroy recode frome the db api
+@app.route('/book/<int:id>',methods=["DELETE"])
+def delete_object(id):
+	i = 0
+	for book in books:
+		if book['id'] == id:
+			books.pop(i)
+			response = Response('',status=204)
+			response.headers['Location'] = '/books'
+			return response
+		i += 1
+	invalidBookOjectErrorMsg =  {
+		"error": "this Id=-{} is not present in DB".format(id)
+	}
+	response = Response(json.dumps(invalidBookOjectErrorMsg),status=404,mimetype='application/json')
+	return response
+
+#use to run a python server
+#default port=5000, change port by prot=7000
 app.run()
