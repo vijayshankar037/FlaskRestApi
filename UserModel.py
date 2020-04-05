@@ -21,7 +21,7 @@ class User(db.Model):
     def match(_username, _password):
         user = User.query.filter_by(username=_username).filter_by(password=_password).first()
         if user is None:
-            return False
+            return True
         else:
             return False
 
