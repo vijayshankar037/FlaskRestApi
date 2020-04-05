@@ -42,7 +42,11 @@ def get_books():
 @app.route('/book/<int:isbn>')
 def get_book_by_isbn(isbn):
     book = Book.get_book(isbn)
-    return jsonify(book)
+    if book:
+        return jsonify(book)
+
+    response = Response("", status=404, mimetype="application/json")
+    return response
 
 #POST insert book
 @app.route('/book', methods = ['POST'])

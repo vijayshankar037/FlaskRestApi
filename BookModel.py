@@ -36,9 +36,11 @@ class Book(db.Model):
 
     #Get book with isbn
     def get_book(_isbn):
-        return Book.json(
-            Book.query.filter_by(isbn=_isbn).first()
-        )
+        book = Book.query.filter_by(isbn=_isbn).first()
+        if book:
+            return Book.json(book)
+
+        return False
 
     #Delete book with isbn
     def delete_book(_isbn):
