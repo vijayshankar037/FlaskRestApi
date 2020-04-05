@@ -21,9 +21,9 @@ class User(db.Model):
     def match(_username, _password):
         user = User.query.filter_by(username=_username).filter_by(password=_password).first()
         if user is None:
-            return True
-        else:
             return False
+        else:
+            return True
 
     def add_user(_username, _password):
         user = User(username=_username, password=_password)
