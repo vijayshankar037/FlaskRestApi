@@ -13,6 +13,14 @@ class Book(db.Model):
 	price = db.Column(db.Float, nullable=False)
 	number = db.Column(db.Integer)
 
+	def json(self):
+		return {
+			"id": self.id,
+			"name": self.name,
+		 	"price": self.price,
+		 	"number": self.number
+		  }
+
 
 	# New Record add 
 	def add_book(_name,_price, _number):
@@ -22,25 +30,25 @@ class Book(db.Model):
 
 	# Model Fetch all Data
 	def get_all_books():
-		return Book.query.all()
+		# return Book.query.all()
+		return [Book.json(book) for book in Book.query.all()]
 	
 	# Filter one record in model
 	def get_book(_number):
-		return Book.query.filter_by(number=_number).first()
-
-	# Model get id then delete record
-	def delete_book(id):
-		row = Book.query.get(id)
-		db.session.delete(row)
+		return Book.json(Book.query.filter_by(number=_number).first())
+	# Delete one record
+	def delete_book(_id):
+		is_deleted = Book.query.filter_by(id=_id).delete()
 		db.session.commit()
+		return bool(is_deleted)
 
-	# # Model get id Record update
-	# def update_book(id):
-	# 	update = Book.query.get(id)
-	# 	update.name = name
-	# 	update.price = price
-	# 	update.number = number
-	# 	db.session.commit()
+
+	# Model get id Record update
+	def update_book_name(_id, _name):
+		update_book = Book.query.filter_by(id=_id).first()
+		update_book.name = _name
+		is_updated = db.session.commit()
+		return bool(is_updated)
 		
 	#Reprasent all record
 	def __repr__(self):
