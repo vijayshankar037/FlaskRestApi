@@ -12,8 +12,15 @@ class Book(db.Model):
     author = db.Column(db.String(80), nullable=False) #table field author
     isbn = db.Column(db.Integer) #table field isbn
 
-    def __init__(**kwargs):
-        super(Foo, self).__init__(**kwargs)
+    # def __init__(**kwargs):
+    #     super(Foo, self).__init__(**kwargs)
+
+    def json(self):
+        return {
+            'name': self.name,
+            'author': self.author,
+            'isbn': self.isbn
+        }
 
     #Model method to insert new record in db
     def add_book(_name, _author, _isbn):
@@ -23,16 +30,21 @@ class Book(db.Model):
 
     #Model method to fetch all records
     def get_all_books():
-        return Book.query.all()
+        return [
+            Book.json(book) for book in Book.query.all()
+        ]
 
     #Get book with isbn
     def get_book(_isbn):
-        return Book.query.filter_by(isbn=_isbn).first()
+        return Book.json(
+            Book.query.filter_by(isbn=_isbn).first()
+        )
 
     #Delete book with isbn
     def delete_book(_isbn):
-        Book.query.filter_by(isbn=_isbn).delete()
+        is_success = Book.query.filter_by(isbn=_isbn).delete()
         db.session.commit()
+        return bool(is_success)
 
     #Defining representation of Model object
     def __repr__(self):

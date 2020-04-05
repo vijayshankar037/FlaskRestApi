@@ -3,22 +3,22 @@ from flask import Flask, jsonify, request, Response, json
 
 #Initalizing app varable from Flask
 #app = Flask(__name__)
-
+from BookModel import *
 from setting import *
 
 #books collection
-books = [
-    {
-        "name":"Progamming in C",
-        "author": "Denis Rich",
-        "isbn": 12345001
-    },
-    {
-        "name":"Python3",
-        "author": "Matt",
-        "isbn":12345002
-    }
-]
+# books = [
+#     {
+#         "name":"Progamming in C",
+#         "author": "Denis Rich",
+#         "isbn": 12345001
+#     },
+#     {
+#         "name":"Python3",
+#         "author": "Matt",
+#         "isbn":12345002
+#     }
+# ]
 
 #books params validation
 def validateBookObject(bookObject):
@@ -35,28 +35,23 @@ def hello_world():
 #GET /books
 @app.route('/books')
 def get_books():
+    books = Book.get_all_books()
     return jsonify({"books": books})
 
 #GET book/:isbn
 @app.route('/book/<int:isbn>')
 def get_book_by_isbn(isbn):
-    for book in books:
-        if book['isbn'] == isbn:
-         return book
+    book = Book.get_book(isbn)
+    return jsonify(book)
 
 #POST insert book
 @app.route('/book', methods = ['POST'])
 def add_book():
     book_params = request.get_json()
     if validateBookObject(book_params):
-        new_book = {
-        "name": book_params["name"],
-        "author": book_params["author"],
-        "isbn": book_params["isbn"]
-        }
-        books.insert(0, new_book)
+        Book.add_book(book_params["name"], book_params["author"], book_params["isbn"])
         response = Response("Book Added", status=201, mimetype="application/json")
-        response.headers['Location'] = "/book/" + str(new_book['isbn'])
+        response.headers['Location'] = "/book/" + str(book_params['isbn'])
         return response
     else:
         invalidBookErrorMsg = {
@@ -69,13 +64,9 @@ def add_book():
 #DELETE /book/isbn
 @app.route('/book/<int:isbn>', methods = ['DELETE'])
 def delete_book(isbn):
-    i = 0
-    for book in books:
-        if book['isbn'] == isbn:
-            books.pop(i)
-            response = Response("", status = 204, mimetype='application/json')
-            return response
-        i+=1
+    if Book.delete_book(isbn):
+        response = Response("", status = 204, mimetype='application/json')
+        return response
 
     invalidBookErrorMsg = {
         "error": "Book with isbn {} is not found, so therefore unable to delete book".format(isbn)
